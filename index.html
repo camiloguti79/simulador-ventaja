@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#0B7A85"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulador de Estudio · Tabla paso a paso</title>
+<style>
+:root{--bg:#F4F7F7;--sf:#fff;--ink:#0E2A33;--mu:#526D75;--ln:#D1DCDE;--a:#0B7A85;--as:#D8EFF1;--ok:#1F7A3D;--oks:#DDF1E3;--no:#B3261E;--nos:#F9E0DD;--hint:#004085;--hints:#cce5ff;--win:#ffeb3b;--wint:#000;--new:#FFF3C4;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A161A;--sf:#12252B;--ink:#E6F1F2;--mu:#95B0B7;--ln:#233B42;--a:#4CC3CE;--as:#123C42;--ok:#6FD08C;--oks:#163B25;--no:#FF8A80;--nos:#4A1F1C;--hint:#66b2ff;--hints:#002752;--win:#665c00;--wint:#fff;--new:#4a4210;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0A161A;--sf:#12252B;--ink:#E6F1F2;--mu:#95B0B7;--ln:#233B42;--a:#4CC3CE;--as:#123C42;--ok:#6FD08C;--oks:#163B25;--no:#FF8A80;--nos:#4A1F1C;--hint:#66b2ff;--hints:#002752;--win:#665c00;--wint:#fff;--new:#4a4210;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;padding:16px}
+main{max-width:980px;margin:0 auto;padding-bottom:60px}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif;margin:0;line-height:1.2}h1{font-size:2rem;color:var(--a)}h2{font-size:1.3rem;margin-bottom:8px}
+.sub{color:var(--mu);margin:6px 0 0}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:20px;margin-top:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+.chip,.btn{font:inherit;background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:8px;padding:8px 14px;cursor:pointer}
+.chip.on{border-color:var(--a);background:var(--as);font-weight:600}.chip small{display:block;color:var(--mu);font-size:.7rem;text-transform:uppercase}
+.btn.pri{background:var(--a);color:#fff;border-color:var(--a);font-weight:600}
+.stmt{background:var(--bg);border-left:4px solid var(--a);padding:12px 16px;border-radius:0 8px 8px 0;margin:10px 0}
+.tw{overflow-x:auto;margin-top:12px;border:1px solid var(--ln);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:right;white-space:nowrap}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{color:var(--mu);font-size:.7rem;text-transform:uppercase;background:var(--bg)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace}.em{color:var(--mu);opacity:.5}
+td.new{background:var(--new);animation:fl 1.6s ease-out}@keyframes fl{0%{background:var(--a);color:#fff}}
+td.win{background:var(--win);color:var(--wint);font-weight:700}
+td.op{background:var(--as);box-shadow:inset 0 0 0 2px var(--a);font-weight:700}
+p.lg{font-size:.85rem;color:var(--mu);margin:8px 0 0}
+.step{border:1px solid var(--ln);border-radius:10px;margin-top:14px;background:var(--sf);overflow:hidden}
+.step[open]{border-color:var(--a)}.step.done{border-color:var(--ok)}
+summary{display:flex;gap:12px;align-items:center;padding:14px 18px;background:var(--bg);cursor:pointer;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}.step[open]>summary{background:var(--as)}.step.done>summary{background:var(--oks)}
+.num{width:30px;height:30px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font:600 .85rem ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;flex:none}.done .num{background:var(--ok)}
+.body{padding:16px 18px}
+.rec{background:var(--bg);border-left:3px solid var(--hint);padding:10px 14px;border-radius:8px;margin-bottom:14px}
+.rec code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;color:var(--hint);background:var(--hints);padding:1px 6px;border-radius:4px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--mu)}
+input,select{font:15px ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:8px 10px}
+input.y,select.y{border-color:var(--ok);background:var(--oks)}input.n,select.n{border-color:var(--no);background:var(--nos)}
+.bar{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--ln);flex-wrap:wrap}
+.exp{background:var(--bg);border-left:4px solid var(--ok);border-radius:8px;padding:12px 16px;margin-top:12px}.exp p{margin:.3rem 0}
+#msg{margin-top:10px;font-weight:600}.pos{color:var(--ok)}.neg{color:var(--no)}
+h4{margin:14px 0 0;font-size:.8rem;text-transform:uppercase;color:var(--mu);letter-spacing:.05em}
+.cp{color:var(--ok)} .ci{color:var(--a)} .ce{color:var(--no)} .cc{color:var(--hint)}
+.hl{background:var(--win);color:var(--wint);padding:1px 5px;border-radius:4px;font-weight:bold}
+body{-webkit-text-size-adjust:100%;word-wrap:break-word}
+input,select{font-size:16px;min-height:44px;max-width:100%}
+.btn,.chip,summary{min-height:44px}.tw{-webkit-overflow-scrolling:touch}svg{max-width:100%}
+@media(max-width:600px){body{padding:10px;font-size:14px}h1{font-size:1.5rem}.card{padding:14px}.body{padding:12px}.fg{grid-template-columns:1fr}.bar{justify-content:stretch}.bar .btn{flex:1 1 100%}.chip{flex:1 1 100%;text-align:left}}
+</style></head><body><main><noscript><p>Activa JavaScript en tu navegador para usar el simulador.</p></noscript>
+<h1>Simulador de Estudio Interactivo</h1>
+<p class="sub">En cada paso: explicación → cálculo → la tabla del profe con las celdas nuevas resaltadas y gráficas geométricas.</p>
+<section class="card"><h2>1 · Elige un ejercicio</h2>
+<b>📖 Ejemplos guiados</b> (avanzas con “Siguiente”)<div class="chips" id="b1"></div>
+<b>✍️ Modo taller</b> (tú calculas)<div class="chips" id="b2"></div>
+<button class="btn" onclick="rand()">🎲 Generar ejercicio al azar</button></section>
+<div id="app"></div>
+<script>
+if(!Array.prototype.flat)Array.prototype.flat=function(){return[].concat.apply([],this)};
+
+const $=s=>document.querySelector(s),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),P=a=>a[R(0,a.length-1)];
+const fmt=(n,d=0)=>{if(Math.abs(n)<1e-9)n=0;let num=Number(Math.abs(n).toFixed(d));let[a,b]=num.toString().replace('.',',').split(',');a=a.replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(n<0?'−':'')+a+(b?','+b:'')};
+const parse=s=>{let t=String(s).trim().replace(/\s/g,'').replace('−','-');if(!t)return NaN;if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');else if(/^-?\d{1,3}(\.\d{3})+$/.test(t))t=t.replace(/\./g,'');return Number(t)};
+const near=(a,b)=>Math.abs(a-b)<=Math.max(Math.abs(b)*.015,.02);
+const BANK=[
+{ty:'e',tag:'Clase EAFIT',lb:'Colombia–China (Guanábanas/Celulares)',n:['Colombia','China'],g:['guanábanas','celulares'],L:[[100,2000],[1000,1500]],Q:[[1000,3000],[5000,10000]],t:.6,E:10000},
+{ty:'e',tag:'Tarea EAFIT',lb:'México–Japón (Mangos/Carros)',n:['México','Japón'],g:['mangos','carros'],L:[[500,800],[700,100]],Q:[[20000,10000],[30000,5000]],t:.5,E:31000},
+{ty:'t',tag:'Taller',lb:'Brasil–Canadá (Café/Maíz)',n:['Brasil','Canadá'],g:['café','maíz'],L:[[10000,24000],[14000,30000]],Q:[[50000,110000],[80000,500000]],t:2,E:50000},
+{ty:'t',tag:'Taller',lb:'Colombia–Alemania (Zapatos/Camisas)',n:['Colombia','Alemania'],g:['zapatos','camisas'],L:[[150,200],[175,200]],Q:[[10000,5000],[1500,7500]],t:1.6667,E:6000}];
+function calc(x){const{L,Q,t,E}=x,u=Q.map((r,p)=>r.map((q,g)=>q/L[p][g])),oc=u.map(r=>[r[1]/r[0],r[0]/r[1]]);
+const va=[0,1].map(g=>u[0][g]>u[1][g]?0:1),ex=oc[0][0]<oc[1][0]?0:1,im=1-ex,Lt=L.map(r=>r[0]+r[1]);
+const sp=[[0,0],[0,0]];sp[ex][0]=Lt[ex]*u[ex][0];sp[im][1]=Lt[im]*u[im][1];const pay=E*t,c=[[0,0],[0,0]];
+c[ex][0]=sp[ex][0]-E;c[ex][1]=pay;c[im][0]=E;c[im][1]=sp[im][1]-pay;
+const gp=sp.map((r,p)=>r.map((v,g)=>v-Q[p][g])),gc=c.map((r,p)=>r.map((v,g)=>v-Q[p][g])),G=a=>[a[0][0]+a[1][0],a[0][1]+a[1][1]];
+return{u,oc,va,ex,im,vc:[ex,im],Lt,sp,pay,c,gp,gc,gP:G(gp),gC:G(gc),lo:oc[ex][0],hi:oc[im][0]}}
+const NM=[['Perú','Corea del Sur'],['Chile','India'],['México','Francia'],['Argentina','Japón'],['Ecuador','Alemania']],GD=[['café','maíz'],['textiles','vino'],['zapatos','camisas'],['celulares','baterías']];
+function rand(){for(let k=0;k<6000;k++){const u=[[R(2,20),R(2,20)],[R(2,20),R(2,20)]],oc=u.map(r=>[r[1]/r[0],r[0]/r[1]]);if(oc[0][0]===oc[1][0])continue;
+const ex=oc[0][0]<oc[1][0]?0:1,lo=oc[ex][0],hi=oc[1-ex][0];if(hi/lo<1.4)continue;const t=Math.round((lo+(hi-lo)*(.25+Math.random()*.5))*100)/100;if(!(t>lo&&t<hi))continue;
+const L=[[R(4,30)*25,R(4,30)*25],[R(4,30)*25,R(4,30)*25]],Q=u.map((r,p)=>r.map((v,g)=>v*L[p][g])),Lt=L.map(r=>r[0]+r[1]);
+const em=Math.min(Lt[ex]*u[ex][0],Lt[1-ex]*u[1-ex][1]/t),st=Math.pow(10,Math.floor(Math.log10(em*.5))-1),E=Math.floor(em*(.3+Math.random()*.3)/st)*st;
+const x={ty:'t',n:P(NM),g:P(GD),L,Q,t,E};if(E>0&&calc(x).gc.flat().every(v=>v>0)){S={x,ty:'t',k:calc(x),cur:0};return go()}}S={x:BANK[0],ty:'t',k:calc(BANK[0]),cur:0};go()}
+function steps(x,k){const[A,B]=x.n,[g1,g2]=x.g,N=x.n,G=x.g,cell=[0,1,2,3].map(j=>`${N[j>>1]} – ${G[j%2]}`),u=k.u.flat(),oc=k.oc.flat(),Q=x.Q.flat(),L=x.L.flat();
+const ex=k.ex,im=k.im,W=(g)=>k.va[g],gl=(v,a)=>v.map((q,j)=>({l:cell[j],v:q}));
+return[
+{t:'Calcula la producción unitaria',rec:'<code>Prod. unitaria = <b class="cp">Producción</b> ÷ <b class="ci">Insumo</b></code> (lo que produce 1 trabajador).',f:u.map((v,j)=>({l:cell[j],v,d:2})),
+exp:u.map((v,j)=>`<p>${cell[j]}: <b class="cp">${fmt(Q[j])}</b> (Producción) ÷ <b class="ci">${fmt(L[j])}</b> (Insumo) = <b>${fmt(v,2)}</b></p>`).join('')},
+{t:'Determina la ventaja absoluta (Smith)',rec:'VA en un bien = país con <b>mayor</b> producción unitaria (se compara cada bien entre países).',
+f:[0,1].map(g=>({l:`¿Quién tiene VA en ${G[g]}?`,v:N[W(g)],sel:N})),
+exp:[0,1].map(g=>`<p>${G[g]}: ${A} ${k.u[0][g]>k.u[1][g]?`<b class="cp">${fmt(k.u[0][g],2)}</b>`:`${fmt(k.u[0][g],2)}`} vs ${B} ${k.u[1][g]>k.u[0][g]?`<b class="cp">${fmt(k.u[1][g],2)}</b>`:`${fmt(k.u[1][g],2)}`} → VA de <b>${N[W(g)]}</b> en ${G[g]}.</p>`).join('')+(W(0)===W(1)?`<p>⚠️ ${N[W(0)]} tiene VA en ambos bienes: Smith no define dirección. Se usa ventaja comparativa (pasos 3 y 4).</p>`:`<p>Cada país tiene VA en un bien distinto: hay base para el comercio y la dirección coincide con la VC.</p>`)},
+{t:'Calcula los costos de oportunidad (TMT)',rec:'<b>¿Qué es?</b> Lo que sacrifico del OTRO bien por producir 1 unidad de este bien. <code>CO de X = Prod. unit. del otro bien ÷ Prod. unit. de X</code><br>Truco: arriba va el <b>otro</b> bien (lo que pierdo) y abajo el bien que calculo (lo que gano). Es la columna amarilla extra que agrega el profe.',f:oc.map((v,j)=>({l:'CO '+cell[j],v,d:2})),
+exp:oc.map((v,j)=>`<p>CO ${cell[j]}: ${G[1-j%2]} <b class="cp">${fmt(u[j^1],2)}</b> (Prod. unit.) ÷ ${G[j%2]} <b class="ci">${fmt(u[j],2)}</b> (Prod. unit.) = <b>${fmt(v,2)}</b><br><small>→ Para hacer 1 ${G[j%2]} en ${N[j>>1]} dejo de hacer ${fmt(v,2)} ${G[1-j%2]}.</small></p>`).join('')+`<p>✔️ Chequeo: los dos CO de un mismo país son inversos (${fmt(oc[0],2)} × ${fmt(oc[1],2)} ≈ 1).</p>`},
+{t:'Determina la ventaja comparativa y la dirección',rec:'<b>Regla simple:</b> mira el MISMO bien en los dos países y elige el CO <b>más pequeño</b>: ese país lo produce “más barato” (sacrifica menos del otro bien) y ése es el que lo exporta.',
+f:[0,1].map(g=>({l:`¿Quién tiene VC en ${G[g]}?`,v:N[k.vc[g]],sel:N})),
+exp:[0,1].map(g=>`<p>${G[g]}: CO ${A} ${k.oc[0][g]<k.oc[1][g]?`<b class="cp">${fmt(k.oc[0][g],2)}</b>`:`${fmt(k.oc[0][g],2)}`} vs ${B} ${k.oc[1][g]<k.oc[0][g]?`<b class="cp">${fmt(k.oc[1][g],2)}</b>`:`${fmt(k.oc[1][g],2)}`} → el número menor es el de <b>${N[k.vc[g]]}</b>: tiene VC en ${G[g]}.</p>`).join('')+`<p>Dirección: <b>${N[ex]}</b> exporta ${g1} e importa ${g2}; <b>${N[im]}</b> exporta ${g2}. El TI (${fmt(x.t,2)}) está entre ${fmt(k.lo,2)} y ${fmt(k.hi,2)}: el comercio conviene a ambos.</p>`},
+{t:'Calcula la producción de especialización',rec:'Todo el <b class="ci">insumo del país (suma de ambos bienes)</b> pasa al bien con VC: <code>Esp = <b class="ci">Insumo total</b> × Prod. unit. del bien</code>. El otro bien queda en 0.',
+f:[{l:`${N[ex]}: ${g1}`,v:k.sp[ex][0]},{l:`${N[im]}: ${g2}`,v:k.sp[im][1]}],
+exp:`<p>${N[ex]}: (<b class="ci">${fmt(L[ex*2])}</b> + <b class="ci">${fmt(L[ex*2+1])}</b>) (Insumo total) × ${fmt(k.u[ex][0],2)} (Prod. unit.) = <b class="ce">${fmt(k.sp[ex][0])}</b> ${g1} (y 0 ${g2}).</p><p>${N[im]}: (<b class="ci">${fmt(L[im*2])}</b> + <b class="ci">${fmt(L[im*2+1])}</b>) (Insumo total) × ${fmt(k.u[im][1],2)} (Prod. unit.) = <b class="ce">${fmt(k.sp[im][1])}</b> ${g2} (y 0 ${g1}).</p>`},
+{t:'Calcula la ganancia de la producción',rec:'<code>Ganancia producción = <b class="ce">Especialización</b> − <b class="cp">Producción (Autarquía)</b></code>. Global = suma de los dos países por bien.',
+f:[...k.gp.flat().map((v,j)=>({l:cell[j],v})),{l:`GLOBAL ${g1}`,v:k.gP[0]},{l:`GLOBAL ${g2}`,v:k.gP[1]}],
+exp:k.gp.flat().map((v,j)=>`<p>${cell[j]}: <b class="ce">${fmt(k.sp.flat()[j])}</b> (Especializ.) − <b class="cp">${fmt(Q[j])}</b> (Autarquía) = <b>${fmt(v)}</b></p>`).join('')+`<p>Global ${g1}: ${fmt(k.gp[0][0])} + ${fmt(k.gp[1][0])} = <b>${fmt(k.gP[0])}</b></p><p>Global ${g2}: ${fmt(k.gp[0][1])} + ${fmt(k.gp[1][1])} = <b>${fmt(k.gP[1])}</b></p>`},
+{t:'Calcula el consumo después del comercio',rec:`<code><b class="cc">Consumo post</b> = <b class="ce">Especialización</b> − Exportaciones + Importaciones</code>.<br>• <b>Tasa de intercambio (TI):</b> 1 ${x.g[0]} = <b>${fmt(x.t,2)}</b> ${x.g[1]}.<br>• El país que exporta, resta esa cantidad de su producción especializada.<br>• El país que importa, suma lo que recibe (Exportación × TI).`,
+f:k.c.flat().map((v,j)=>({l:cell[j],v})),
+exp:`<p>${cell[ex*2]}: <b class="ce">${fmt(k.sp[ex][0])}</b> (Especializ.) − ${fmt(x.E)} (Exporta) = <b class="cc">${fmt(k.c[ex][0])}</b></p><p>${cell[ex*2+1]} (importado): recibe ${fmt(x.E)} × <b>${fmt(x.t,2)}</b> (Tasa intercambio) = <b class="cc">${fmt(k.c[ex][1])}</b></p><p>${cell[im*2]} (importado): recibe <b>${fmt(x.E)}</b></p><p>${cell[im*2+1]}: <b class="ce">${fmt(k.sp[im][1])}</b> (Especializ.) − ${fmt(k.pay)} (Exporta) = <b class="cc">${fmt(k.c[im][1])}</b></p>`},
+{t:'Calcula la ganancia del consumo y concluye',rec:'<code>Ganancia consumo = <b class="cc">Consumo post-comercio</b> − <b class="cp">Producción (Autarquía)</b></code>. Global = suma por bien.',
+f:[...k.gc.flat().map((v,j)=>({l:cell[j],v})),{l:`GLOBAL ${g1}`,v:k.gC[0]},{l:`GLOBAL ${g2}`,v:k.gC[1]}],
+exp:k.gc.flat().map((v,j)=>`<p>${cell[j]}: <b class="cc">${fmt(k.c.flat()[j])}</b> (Consumo post) − <b class="cp">${fmt(Q[j])}</b> (Autarquía) = <b>${fmt(v)}</b></p>`).join('')+`<p>Global ${g1}: ${fmt(k.gc[0][0])} + ${fmt(k.gc[1][0])} = <b>${fmt(k.gC[0])}</b></p><p>Global ${g2}: ${fmt(k.gc[0][1])} + ${fmt(k.gc[1][1])} = <b>${fmt(k.gC[1])}</b> (iguales a la ganancia global de prod).</p><p><b>Conclusión:</b> las ganancias globales de producción y consumo son &gt; 0 y ambos países ganan en consumo: comercio <b>mutuamente benéfico</b>.</p>`}]}
+function tbl(x,k,s){const H=['Insumo','Producción','Prod. unitaria','Costo oport.','Especializ.','Gan. producción','Consumo post','Gan. consumo'],min=[-9,-9,0,2,4,5,6,7];
+const cols=[x.L.flat(),x.Q.flat(),k.u.flat(),k.oc.flat(),k.sp.flat(),k.gp.flat(),k.c.flat(),k.gc.flat()],dec=[0,0,2,2,0,0,0,0];
+const rows=[0,1,2,3].map(j=>{
+let gCl='';if((s===1&&k.va[j%2]===j>>1)||(s===3&&k.vc[j%2]===j>>1))gCl='win';
+return`<tr><td>${x.n[j>>1]}</td><td class="${gCl}">${x.g[j%2]}</td>`+cols.map((c,i)=>{if(i>=0&&min[i]>s)return'<td class="em">·</td>';
+let cl=min[i]===s?'new':'';if(i===2&&s===1&&k.va[j%2]===j>>1)cl+=' win';if(i===3&&s===3&&k.vc[j%2]===j>>1)cl+=' win';if((s===5&&(i===4||i===1))||(s===7&&(i===6||i===1))||(s===6&&i===4))cl+=' op';
+const v=c[j],sg=i>=5?(v>0?'pos':v<0?'neg':''):'';return`<td class="mono ${cl}"><span class="${sg}">${i>=5&&v>0?'+':''}${fmt(v,dec[i])}</span></td>`}).join('')+'</tr>'}).join('');
+const lg=s===5?'<p class="lg">🔷 Celdas con borde azul = lo que se resta en cada fila: <b>Especializ. − Producción</b>. 🟨 Resultado en Gan. producción.</p>':s===6?'<p class="lg">🔷 Se parte de la <b>Especializ. (borde azul)</b>: al bien que el país exporta se le resta la exportación; en el otro bien se suma lo que recibe importado.</p>':s===7?'<p class="lg">🔷 Celdas con borde azul = lo que se resta en cada fila: <b>Consumo post − Producción (autarquía)</b>. 🟨 Resultado en Gan. consumo.</p>':'';const ft=(s>=5?`<tr><td colspan="5"><b>Ganancia global producción</b></td><td class="mono ${s===5?'new':''}">${fmt(k.gP[0])} ${x.g[0]}<br>${fmt(k.gP[1])} ${x.g[1]}</td><td></td><td></td></tr>`:'')+(s>=7?`<tr><td colspan="7"><b>Ganancia global consumo</b></td><td class="mono new">${fmt(k.gC[0])} ${x.g[0]}<br>${fmt(k.gC[1])} ${x.g[1]}</td></tr>`:'');
+return`<div class="tw"><table><tr><th>País</th><th>Bien</th>${H.map(h=>`<th>${h}</th>`).join('')}</tr>${rows}${ft}</table></div>${lg}`}
+function chart(p){const x=S.x,k=S.k,t=x.t,Xm=k.Lt[p]*k.u[p][0],Ym=k.Lt[p]*k.u[p][1],A=x.Q[p],B=k.sp[p],C=k.c[p],isX=p===k.ex,e=isX?[0,t*Xm]:[Ym/t,0],D=isX?[C[0],0]:[C[0],B[1]];
+const W=390,H=310,m={l:62,r:16,t:26,b:44},pts=[[Xm,0],[0,Ym],A,B,C,e],xm=Math.max(...pts.map(q=>q[0]))*1.08,ym=Math.max(...pts.map(q=>q[1]))*1.08,sx=v=>m.l+v/xm*(W-m.l-m.r),sy=v=>H-m.b-v/ym*(H-m.t-m.b),OR='#B8590A';
+let o=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><text x="${W/2}" y="15" text-anchor="middle" font-size="13" font-weight="700" fill="var(--ink)">${x.n[p]}</text>`;
+for(let i=0;i<=4;i++){const gx=xm*i/4,gy=ym*i/4;o+=`<line x1="${sx(gx)}" y1="${sy(0)}" x2="${sx(gx)}" y2="${sy(ym)}" stroke="var(--ln)"/><line x1="${sx(0)}" y1="${sy(gy)}" x2="${sx(xm)}" y2="${sy(gy)}" stroke="var(--ln)"/>`}
+o+=`<text x="${W/2}" y="${H-5}" text-anchor="middle" font-size="11" fill="var(--mu)">${x.g[0]}</text><text transform="translate(12 ${H/2}) rotate(-90)" text-anchor="middle" font-size="11" fill="var(--mu)">${x.g[1]}</text>`;
+o+=`<line x1="${sx(0)}" y1="${sy(Ym)}" x2="${sx(Xm)}" y2="${sy(0)}" stroke="var(--a)" stroke-width="2.5"/><line x1="${sx(B[0])}" y1="${sy(B[1])}" x2="${sx(e[0])}" y2="${sy(e[1])}" stroke="${OR}" stroke-width="2" stroke-dasharray="6 4"/><polygon points="${sx(B[0])},${sy(B[1])} ${sx(C[0])},${sy(C[1])} ${sx(D[0])},${sy(D[1])}" fill="${OR}" fill-opacity=".2" stroke="${OR}"/>`;
+const dot=(q,l,c,dx,dy)=>`<circle cx="${sx(q[0])}" cy="${sy(q[1])}" r="5.5" fill="${c}"/><text x="${sx(q[0])+dx}" y="${sy(q[1])+dy}" font-size="12" font-weight="700" fill="${c}">${l}</text>`;
+const T=(q,l,c,dx,dy)=>{const r=sx(q[0])>W*.62;return`<circle cx="${sx(q[0])}" cy="${sy(q[1])}" r="5.5" fill="${c}"/><text x="${sx(q[0])+(r?-dx:dx)}" y="${sy(q[1])+dy}" text-anchor="${r?'end':'start'}" font-size="11" font-weight="700" fill="${c}" stroke="var(--sf)" stroke-width="3" paint-order="stroke">${l} (${fmt(q[0])}; ${fmt(q[1])})</text>`};
+const pr=(q,c)=>`<line x1="${sx(q[0])}" y1="${sy(q[1])}" x2="${sx(q[0])}" y2="${sy(0)}" stroke="${c}" stroke-dasharray="3 3"/><line x1="${sx(q[0])}" y1="${sy(q[1])}" x2="${sx(0)}" y2="${sy(q[1])}" stroke="${c}" stroke-dasharray="3 3"/>`;
+const ax=(q,c)=>(q[0]>0?`<text x="${sx(q[0])}" y="${sy(0)+14}" font-size="10" font-weight="700" text-anchor="middle" fill="${c}">${fmt(q[0])}</text>`:'')+(q[1]>0?`<text x="${sx(0)-5}" y="${sy(q[1])+3}" font-size="10" font-weight="700" text-anchor="end" fill="${c}">${fmt(q[1])}</text>`:'');
+o+=pr(A,'var(--ink)')+pr(B,'var(--a)')+pr(C,'var(--ok)')+ax(A,'var(--ink)')+ax(B,'var(--a)')+ax(C,'var(--ok)')+ax([Xm,0],'var(--a)')+ax([0,Ym],'var(--a)')+ax(e,OR);
+o+=`<circle cx="${sx(D[0])}" cy="${sy(D[1])}" r="4" fill="none" stroke="${OR}" stroke-width="2"/><text x="${sx(D[0])+7}" y="${sy(D[1])-8}" font-size="11" font-weight="700" fill="${OR}">D</text>`;
+o+=T(A,'A','var(--ink)',9,16)+T(B,'B','var(--a)',9,-10)+T(C,'C','var(--ok)',9,-10);
+return o+`</svg><p style="font-size:.84rem;color:var(--ink);margin:4px 0 0"><b>A</b> autarquía = (${fmt(A[0])}; ${fmt(A[1])})<br><b>B</b> especialización = (${fmt(B[0])}; ${fmt(B[1])})<br><b>C</b> consumo = (${fmt(C[0])}; ${fmt(C[1])})<br><b>Triángulo B–C–D:</b> ${isX?'exporta':'importa'} ${fmt(Math.abs(B[0]-D[0]))} ${x.g[0]} (horizontal) y ${isX?'importa':'exporta'} ${fmt(Math.abs(C[1]-D[1]))} ${x.g[1]} (vertical).</p><p style="font-size:.82rem;color:var(--mu);margin:4px 0 0">FPP: (${fmt(Xm)} ${x.g[0]}, 0) – (0, ${fmt(Ym)} ${x.g[1]})<br>LPC: B → (${fmt(e[0])}, ${fmt(e[1])})</p>`}
+function charts(){return`<section class="card" style="border-color:var(--a)"><h2>📊 Gráficas: FPP, LPC y triángulo del comercio</h2><div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">${chart(0)}${chart(1)}</div><div class="exp"><p><b>Cómo leerla:</b> línea azul = FPP (lo máximo que puede producir con todos sus trabajadores en un solo bien o mezclados). Punto <b>A</b> = autarquía (dentro de la FPP). Punto <b>B</b> = especialización (el extremo de la FPP del bien con VC). Línea naranja punteada = LPC: sale de B con la pendiente del TI. Punto <b>C</b> = consumo después de comercio (sobre la LPC, <b>fuera</b> de la FPP = ganancia). Triángulo naranja <b>B–C–D</b> = comercio: un cateto es lo que exporta y el otro lo que importa.</p></div></section>`}
+let S=null;
+const solved=(s,i)=>`<h4>Procedimiento</h4><div class="exp">${s.exp}</div><h4>Así va la tabla (paso ${i+1})</h4>${tbl(S.x,S.k,i)}`;
+function go(){const x=S.x,st=steps(x,S.k);let h=`<section class="card"><h2>2 · ${x.lb||'Ejercicio al azar'}</h2><div class="stmt">${x.n[0]} y ${x.n[1]} producen ${x.g[0]} y ${x.g[1]} en autarquía. El país con ventaja comparativa en <b>${x.g[0]}</b> exporta <b>${fmt(x.E)}</b> con TI <b>1 ${x.g[0]} : ${fmt(x.t,2)} ${x.g[1]}</b>.</div>${tbl(x,S.k,-1)}<div class="bar"><button class="btn" onclick="tog()">${S.ty==='e'?'✍️ Pasar a modo taller':'📖 Ver como ejemplo resuelto'}</button></div></section>`;
+for(let i=0;i<Math.min(S.cur+1,st.length);i++){const s=st[i],cu=i===S.cur,d=i<S.cur;
+h+=`<details class="step ${d?'done':''}" ${cu?'open':''}><summary><span class="num">${d?'✓':i+1}</span>${s.t}</summary><div class="body"><div class="rec">💡 ${s.rec}</div>`;
+if(d)h+=solved(s,i);else if(S.ty==='e')h+=solved(s,i)+`<div class="bar"><button class="btn pri" onclick="nx()">${i===st.length-1?'Finalizar':'Siguiente paso →'}</button></div>`;
+else h+=`<div id="in"><div class="fg">${s.f.map((f,j)=>`<label>${f.l}${f.sel?`<select id="f${j}"><option value="">—</option>${f.sel.map(o=>`<option>${o}</option>`).join('')}</select>`:`<input id="f${j}" inputmode="decimal" placeholder="?">`}</label>`).join('')}</div><div class="bar"><button class="btn" onclick="sol()">Mostrar solución</button><button class="btn pri" onclick="chk()">Verificar</button></div><div id="msg"></div></div><div id="af" hidden>${solved(s,i)}<div class="bar"><button class="btn pri" onclick="nx()">${i===st.length-1?'Finalizar':'Siguiente paso →'}</button></div></div>`;
+h+='</div></details>'}
+if(S.cur>=st.length)h+=charts();if(S.cur>=st.length)h+=`<section class="card" style="border-color:var(--ok)"><h2>🎉 ¡Ejercicio completado!</h2><p>Repite con otros hasta que el proceso te salga solo.</p><button class="btn pri" onclick="rand()">🎲 Otro ejercicio al azar</button></section>`;
+$('#app').innerHTML=h;bank()}
+function bank(){const f=(t)=>BANK.map((b,i)=>b.ty===t?`<button class="chip ${S.x===b?'on':''}" onclick="pick(${i})"><small>${b.tag}</small>${b.lb}</button>`:'').join('');$('#b1').innerHTML=f('e');$('#b2').innerHTML=f('t')}
+function pick(i){const x=BANK[i];S={x,ty:x.ty,k:calc(x),cur:0};go();scrollTo(0,0)}
+function tog(){S.ty=S.ty==='e'?'t':'e';S.cur=0;go()}
+function nx(){S.cur++;go()}
+function chk(){const s=steps(S.x,S.k)[S.cur];let ok=true;s.f.forEach((f,j)=>{const e=$('#f'+j),v=f.sel?e.value===f.v:near(parse(e.value),f.v);e.className=v?'y':'n';if(!v)ok=false});
+if(ok){$('#in').hidden=true;$('#af').hidden=false}else $('#msg').innerHTML='<span class="neg">❌ Revisa los campos en rojo con el recordatorio. Sin separador de miles y decimales con coma.</span>'}
+function sol(){$('#in').hidden=true;$('#af').hidden=false}
+pick(0);
+</script></main></body></html>
